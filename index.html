@@ -198,6 +198,7 @@ canvas.face{
 .cc-uses span{border:1px solid #e0d6c2;background:#f4ecdd;color:#4a423a;
   font-size:12px;padding:6px 4px;text-align:center;}
 .cc-body{font-size:13px;line-height:1.85;color:#4a423a;}
+.cc-1line{display:block;white-space:nowrap;font-size:min(3.35vw,13px);}
 .cc-mk{color:#16130f;background:linear-gradient(transparent 58%,#ffe95c 58%,#ffe95c 94%,transparent 94%);font-weight:bold;}
 .cc-btn{display:block;width:100%;margin:16px 0 0;padding:14px;
   background:#c8102e;color:#fff;border:none;border-radius:3px;
@@ -341,7 +342,8 @@ const PAL={
   h:'#3d2f24', H:'#1f1813', W:'#b3aea6', g:'#7d786f',
   S:'#e9c5a3', s:'#bb8b6688', t:'#a87b5a',
   B:'#cec1b0', E:'#171310',
-  C:'#1c1c20', c:'#0d0d10', l:'#40404a', T:'#eceae4'
+  C:'#1c1c20', c:'#0d0d10', l:'#40404a', T:'#eceae4',
+  k:'#221f1c', K:'#3c372f', N:'#414a5e', n:'#2b3242', D:'#7a2b34', w:'#9ec8e6'
 };
 /* [y, x0, x1, 色] 上書き順 */
 const BASE=[
@@ -450,6 +452,47 @@ const MOODS=[
     mouth:[[13,18],[14,17],[15,17],[16,17],[17,16],[18,15]]
   }
 ];
+/* 営業部の若手（1種類のみ・弱気） */
+const SALES=[
+  // 首
+  [21,14,17,'t'],[22,14,17,'S'],[23,14,17,'S'],
+  // スーツ
+  [24,10,21,'N'],[25,8,23,'N'],[26,6,25,'N'],[27,5,26,'N'],[28,4,27,'N'],
+  [29,3,28,'N'],[30,3,28,'N'],[31,2,29,'N'],[32,2,29,'N'],[33,2,29,'N'],
+  // ワイシャツ
+  [24,13,18,'T'],[25,13,18,'T'],[26,14,17,'T'],[27,15,16,'T'],
+  // ラペル
+  [25,11,12,'n'],[25,19,20,'n'],[26,12,13,'n'],[26,18,19,'n'],
+  [27,13,14,'n'],[27,17,18,'n'],[28,14,15,'n'],[28,16,17,'n'],
+  // ネクタイ
+  [25,15,16,'D'],[26,15,16,'D'],[27,15,16,'D'],[28,15,16,'D'],
+  [29,15,16,'D'],[30,15,16,'D'],[31,15,16,'D'],
+  // 髪（黒・短髪）
+  [3,12,19,'k'],[4,11,20,'k'],[5,10,21,'k'],[6,10,21,'k'],[7,10,21,'k'],
+  [8,10,10,'k'],[8,21,21,'k'],[9,10,10,'k'],[9,21,21,'k'],[10,10,10,'k'],[10,21,21,'k'],
+  [3,13,17,'K'],[4,12,15,'K'],[5,11,13,'K'],
+  // 顔（丸め・若い）
+  [7,12,19,'S'],[8,11,20,'S'],[9,11,20,'S'],[10,11,20,'S'],[11,11,20,'S'],[12,11,20,'S'],
+  [13,11,20,'S'],[14,11,20,'S'],[15,11,20,'S'],[16,12,19,'S'],[17,12,19,'S'],[18,12,19,'S'],
+  [19,13,18,'S'],[20,14,17,'S'],
+  // 前髪（まっすぐ・七三）
+  [7,11,20,'k'],[8,11,13,'k'],[8,18,20,'k'],[8,14,14,'k'],
+  // 影
+  [9,20,20,'s'],[10,20,20,'s'],[11,20,20,'s'],[12,20,20,'s'],[13,20,20,'s'],
+  [14,20,20,'s'],[15,20,20,'s'],[16,19,19,'s'],[17,19,19,'s'],
+  // 鼻
+  [14,16,16,'s'],[15,16,16,'s'],[16,15,16,'s'],
+  // 冷や汗
+  [8,22,22,'w'],[9,22,22,'w'],
+  // 眉（八の字＝弱気。外側が下がる）
+  [11,12,12,'E'],[10,13,14,'E'],
+  [10,17,18,'E'],[11,19,19,'E'],
+  // 目（丸く大きめ）
+  [12,12,13,'E'],[13,12,13,'E'],[12,18,19,'E'],[13,18,19,'E'],
+  // 口（小さく引き結ぶ）
+  [18,14,17,'E']
+];
+
 function moodOf(m){ return m>=2.0?4 : m>=1.5?3 : m>=1.0?2 : m>=0.7?1 : 0; }
 function drawFace(cv,mood,sc){
   const g=cv.getContext('2d');
@@ -465,9 +508,20 @@ function drawFace(cv,mood,sc){
   M.eye.forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
   M.mouth.forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
 }
+function drawSales(cv,sc){
+  const g=cv.getContext('2d');
+  cv.width=FW*sc; cv.height=FH*sc;
+  g.imageSmoothingEnabled=false;
+  g.clearRect(0,0,cv.width,cv.height);
+  SALES.forEach(([y,x0,x1,k])=>{ g.fillStyle=PAL[k]; g.fillRect(x0*sc,y*sc,(x1-x0+1)*sc,sc); });
+}
 function face(mood,sc){ return `<canvas class="face" data-mood="${mood}" data-sc="${sc}" style="width:${FW*sc}px;height:${FH*sc}px"></canvas>`; }
+function sales(sc){ return `<canvas class="face" data-kind="sales" data-sc="${sc}" style="width:${FW*sc}px;height:${FH*sc}px"></canvas>`; }
 function paintFaces(){
-  app.querySelectorAll('canvas.face').forEach(cv=>drawFace(cv,+cv.dataset.mood,+cv.dataset.sc));
+  app.querySelectorAll('canvas.face').forEach(cv=>{
+    const sc=+cv.dataset.sc;
+    if(cv.dataset.kind==='sales') drawSales(cv,sc); else drawFace(cv,+cv.dataset.mood,sc);
+  });
 }
 
 /* ===================== 効果音 ===================== */
@@ -596,8 +650,8 @@ function startRound(){
       <div class="d">${R.desc}</div>
     </div>
     <div class="react">
-      ${face(1,4)}
-      <div class="talk"><div class="who">営業部</div><div class="line">「初版、${fmt(R.base)}部が限界っすね」</div></div>
+      ${sales(4)}
+      <div class="talk"><div class="who">営 業 部</div><div class="line">「初版、${fmt(R.base)}部が限界っすね」</div></div>
     </div>
     <div class="spacer"></div>
     <button class="cta" onclick="step()">やってみる</button>
@@ -727,7 +781,7 @@ function offer(){
 
 function flyer(){
   show(`
-    <div class="kicker">C O N T E N A</div>
+    <div class="kicker">特 別 な ご 案 内</div>
     <div class="contena-card">
       <div class="cc-lead">このゲームのように</div>
       <div class="cc-head">あなたの人生・事業を、<br>ゲーム化しませんか？</div>
@@ -735,7 +789,7 @@ function flyer(){
         <span>集客・リスト取り</span><span>ブランディング</span>
         <span>講座・出版の販促</span><span>話題づくり・PR</span>
       </div>
-      <div class="cc-body">本でも、SNSでも、広告でもない。<br><span class="cc-mk">第4の選択肢「ゲーム」</span>で事業を成長させましょう。</div>
+      <div class="cc-body">本でも、SNSでも、広告でもない。<span class="cc-1line"><span class="cc-mk">第4の選択肢「ゲーム」</span>で事業を成長させる。</span></div>
       ${lpLink('cc-btn','詳 し く は こ ち ら')}
       <div class="cc-note">（別のタブで開きます）</div>
     </div>
