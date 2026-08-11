@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ベストセラー製造機</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="googlebot" content="noindex,nofollow">
+<style>
+:root{
+  --ink:#12100e;
+  --paper:#efe9dd;
+  --paper2:#e3dbcb;
+  --obi:#c2261f;
+  --gold:#b89b5e;
+  --dim:#7a7268;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:#0b0a09;
+  color:var(--paper);
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  display:flex;justify-content:center;
+  overflow-x:hidden;
+}
+#app{
+  width:100%;max-width:560px;min-height:100dvh;
+  padding:20px 18px 40px;
+  display:flex;flex-direction:column;
+  position:relative;
+}
+.fade{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---- 共通 ---- */
+.kicker{font-size:11px;letter-spacing:.32em;color:var(--gold);margin-bottom:14px}
+h1{font-size:clamp(26px,7.5vw,38px);line-height:1.3;margin:0 0 8px;font-weight:600}
+h2{font-size:clamp(19px,5vw,24px);line-height:1.5;margin:0 0 14px;font-weight:600}
+p{line-height:1.85;font-size:15px;margin:0 0 14px;color:#ddd5c6}
+.small{font-size:12.5px;color:var(--dim);line-height:1.8}
+
+.btn{
+  display:block;width:100%;text-align:left;
+  background:var(--paper);color:var(--ink);
+  border:none;border-left:5px solid var(--obi);
+  padding:15px 16px;margin-bottom:10px;
+  font-family:inherit;font-size:15.5px;line-height:1.55;
+  cursor:pointer;transition:transform .12s,box-shadow .12s;
+}
+.btn:active{transform:scale(.985)}
+.btn:hover{box-shadow:0 0 0 2px var(--gold)}
+.btn .no{font-size:11px;color:var(--dim);letter-spacing:.2em;display:block;margin-bottom:3px}
+.cta{
+  background:var(--obi);color:#fff;border:none;border-left:none;
+  text-align:center;font-size:17px;letter-spacing:.1em;padding:17px;
+  width:100%;font-family:inherit;cursor:pointer;margin-top:8px;
+}
+
+/* ---- 原稿カード ---- */
+.ms{
+  background:var(--paper);color:var(--ink);
+  padding:20px 18px;margin-bottom:22px;
+  position:relative;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+.ms::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:34px;
+  background:var(--obi);
+}
+.ms .tag{font-size:10.5px;letter-spacing:.3em;color:var(--obi);margin-bottom:8px}
+.ms .t{font-size:20px;font-weight:600;margin-bottom:10px;line-height:1.4}
+.ms .d{font-size:14px;line-height:1.9;color:#403a33;margin-bottom:38px}
+
+/* ---- 講評 ---- */
+.talk{
+  border-left:3px solid var(--gold);
+  padding:4px 0 4px 15px;margin:18px 0 22px;
+}
+.talk .who{font-size:11px;letter-spacing:.25em;color:var(--gold);margin-bottom:7px}
+.talk .line{font-size:16px;line-height:1.9;color:#f2ece0}
+
+/* ---- 数字 ---- */
+.meter{margin:26px 0 20px}
+.meter .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.2em;color:var(--dim);margin-bottom:8px}
+.num{font-size:clamp(34px,11vw,52px);letter-spacing:.02em;color:#fff;font-weight:600;font-feature-settings:"tnum"}
+.num small{font-size:16px;color:var(--dim);margin-left:4px;font-weight:400}
+.bar{height:6px;background:#241f1b;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--obi),var(--gold));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.stamp{
+  display:inline-block;border:2px solid var(--obi);color:var(--obi);
+  padding:4px 12px;font-size:13px;letter-spacing:.2em;margin-top:14px;
+  transform:rotate(-3deg);opacity:0;animation:pop .4s .5s ease both;
+}
+@keyframes pop{from{opacity:0;transform:rotate(-3deg) scale(1.5)}to{opacity:1;transform:rotate(-3deg) scale(1)}}
+
+.step{display:flex;gap:6px;margin-bottom:18px}
+.step i{flex:1;height:2px;background:#2a2521}
+.step i.on{background:var(--gold)}
+
+.rank{font-size:clamp(48px,16vw,76px);color:var(--gold);line-height:1;margin:6px 0 4px;font-weight:600}
+.rankname{font-size:18px;letter-spacing:.15em;margin-bottom:20px}
+
+.card{background:#16130f;border:1px solid #2c261f;padding:16px;margin-bottom:11px}
+.card h3{margin:0 0 7px;font-size:15px;color:var(--gold);font-weight:600;letter-spacing:.05em}
+.card p{margin:0;font-size:13.5px;line-height:1.85;color:#c9c1b4}
+
+.spacer{flex:1}
+.footnote{margin-top:26px;padding-top:16px;border-top:1px solid #2a2521}
+
+/* ---- タイトル画面 ---- */
+.title-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0 4px}
+.cover{
+  background:var(--paper);
+  position:relative;
+  box-shadow:0 18px 50px rgba(0,0,0,.65);
+  display:flex;flex-direction:column;
+  height:min(66dvh,520px);
+  animation:rise .8s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.cover .plate{
+  flex:1;display:flex;justify-content:center;
+  padding:26px 18px 20px;overflow:hidden;
+}
+.vt{
+  writing-mode:vertical-rl;text-orientation:upright;
+  color:var(--ink);height:100%;
+  --tfs:min(calc((min(66dvh,520px) - 90px) / 10.2),48px);
+}
+.vt .by,.vt .mt{white-space:nowrap;margin:0;font-size:var(--tfs);letter-spacing:.1em;line-height:1.1}
+.vt .by{color:#4a433c;margin-left:.24em}
+.vt .by .p{font-size:.5em;letter-spacing:0}
+.vt .mt{font-weight:600}
+.cover .obi{
+  background:var(--obi);color:#fff;
+  padding:13px 16px;text-align:center;
+  font-size:11px;letter-spacing:.34em;
+  animation:slidein .7s .35s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes slidein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.title-sub{text-align:center;font-size:12px;color:var(--dim);letter-spacing:.16em;margin-top:18px}
+
+/* ---- ドット絵 ---- */
+canvas.face{
+  image-rendering:pixelated;image-rendering:-moz-crisp-edges;
+  display:block;flex:none;
+}
+.react{display:flex;gap:12px;align-items:center;margin:16px 0 18px}
+.react .talk{margin:0;flex:1;min-width:0}
+.react .talk .line{font-size:14px;line-height:1.8}
+.ask{display:flex;gap:11px;align-items:center;margin-bottom:16px}
+.ask h2{margin:0;flex:1;min-width:0;font-size:clamp(17px,4.6vw,22px)}
+.face-center{display:flex;justify-content:center;margin:2px 0 6px}
+
+/* ---- 音トグル ---- */
+#hud{position:fixed;top:12px;right:12px;z-index:9;display:flex;gap:8px}
+#hud button{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,.4);border:1.5px solid var(--obi);
+  color:#fff;font-family:inherit;font-size:14px;line-height:1;
+  cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;
+}
+#hud button:active{transform:scale(.92)}
+#hud svg{width:15px;height:15px;display:block}
+#mute.off{color:#5a544d;border-color:#5c2320}
+
+/* ---- タイトルの控えめ導線 ---- */
+.lp-quiet{
+  display:block;width:100%;margin-top:14px;padding:12px;
+  background:transparent;border:1px solid #3a332b;color:#8a8278;
+  font-family:inherit;font-size:13px;letter-spacing:.08em;cursor:pointer;
+  text-align:center;text-decoration:none;box-sizing:border-box;
+}
+.lp-quiet:active{transform:scale(.99)}
+
+/* ---- ☰シート ---- */
+#sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:24px}
+#sheet.open{display:flex}
+.sheet-box{width:100%;max-width:330px;background:#16130f;border:1px solid #2f2922;padding:14px}
+.sheet-box button,.sheet-box a{
+  display:block;width:100%;margin-bottom:9px;padding:14px;
+  background:#221d18;border:1px solid #3a332b;color:#e2dacb;
+  font-family:inherit;font-size:14.5px;cursor:pointer;
+  text-align:center;text-decoration:none;box-sizing:border-box;
+}
+.sheet-box button.ghost{background:transparent;border-color:#2a2521;color:#7a7268;margin-bottom:0;font-size:13px;padding:11px}
+
+/* ---- Contena チラシ ---- */
+.contena-card{background:#fbf7ef;color:#16130f;border:1px solid #e0d6c2;
+  padding:20px 18px 16px;text-align:center;image-rendering:auto;
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",sans-serif;}
+.cc-lead{font-size:12px;color:#8f0a20;letter-spacing:2px;}
+.cc-head{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  font-size:21px;font-weight:bold;line-height:1.55;margin-top:8px;}
+.cc-uses{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:14px 0 12px;}
+.cc-uses span{border:1px solid #e0d6c2;background:#f4ecdd;color:#4a423a;
+  font-size:12px;padding:6px 4px;text-align:center;}
+.cc-body{font-size:13px;line-height:1.85;color:#4a423a;}
+.cc-mk{color:#16130f;background:linear-gradient(transparent 58%,#ffe95c 58%,#ffe95c 94%,transparent 94%);font-weight:bold;}
+.cc-btn{display:block;width:100%;margin:16px 0 0;padding:14px;
+  background:#c8102e;color:#fff;border:none;border-radius:3px;
+  font-family:inherit;font-size:16px;font-weight:bold;letter-spacing:1px;
+  cursor:pointer;box-shadow:0 3px 0 #8f0a20;
+  text-align:center;text-decoration:none;box-sizing:border-box;}
+.cc-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8f0a20;}
+.cc-note{color:#8a8378;font-size:11px;margin-top:7px;}
+
+@media (max-height:700px){
+  #app{padding:14px 18px 26px}
+  .contena-card{padding:15px 15px 13px}
+  .cc-uses{margin:10px 0 9px}
+  .cc-btn{margin-top:12px;padding:12px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="hud">
+  <button id="mute" title="音のオン／オフ">♪</button>
+  <button id="menu" title="メニュー" aria-label="メニュー"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.6 9.6V20.5h12.8V9.6"/><path d="M9.8 20.5v-5.4h4.4v5.4"/></svg></button>
+</div>
+<div id="sheet">
+  <div class="sheet-box">
+    <button id="sheetHome">トップ画面へ戻る</button>
+    <a id="sheetLp" target="_blank" rel="noopener">あなたのゲームを作りませんか？</a>
+    <button class="ghost" id="sheetClose">閉じる</button>
+  </div>
+</div>
+
+<script>
+/* ===================== データ ===================== */
+const ROUNDS = [
+{
+  tag:"持ち込み原稿 ①",
+  title:"『三度の転職で年収を倍にした話』",
+  desc:"四十二歳、元メーカー人事。文章は丁寧。内容も正しい。正しすぎて、三ページで眠くなる。営業部の評価は「悪くないけど、まあ、五千部」。",
+  base:5000,
+  steps:[
+    {q:"まず、タイトルを決める。",opts:[
+      {t:"『40歳からの転職成功メソッド』",m:1.0,c:"中身の要約だな。正確だ。──正確な本は、売れない。書店で誰の足も止まらない。"},
+      {t:"『転職の科学』",m:1.7,c:"悪くない。「科学」は人間を思考停止させる魔法の言葉だ。ただ、この著者にその肩書きはない。いつかバレる。"},
+      {t:"『会社を辞めても、死なない。』",m:2.6,c:"そう、それだ。読者が金を払うのは方法じゃない。「怖い」を消してもらうためだ。"},
+      {t:"『僕が会社を辞めた日』",m:0.6,c:"著者は泣いて喜ぶだろうな。で、誰が買うんだ、知らないおっさんの日記を。"}
+    ]},
+    {q:"次に、帯のコピー。書店で読まれるのは、ここだけだ。",opts:[
+      {t:"元人事部長が教える、転職のすべて",m:1.2,c:"「すべて」と書く人間は、結局なにも言っていない。"},
+      {t:"あなたは、なぜ辞められないのか。",m:2.3,c:"正解。答えじゃなく、問いを置く。人は自分の話をされた瞬間に本を開く。"},
+      {t:"転職成功率98%",m:1.5,c:"数字は強い。強いが、この本の数字じゃない。いつか刺されるぞ。"},
+      {t:"涙が止まらない、再生の物語",m:0.5,c:"それは小説の帯だ。棚が違う。棚を間違えた本は、静かに死ぬ。"}
+    ]},
+    {q:"発売週。予算はここに全部突っ込める。",opts:[
+      {t:"配本を厚くして、全国の書店に平積み",m:1.7,c:"金で殴る。効く。ただし一週間で棚から消える。"},
+      {t:"著者をテレビに出す",m:1.1,c:"無名の元人事部長を、どこの局が呼ぶんだ。"},
+      {t:"転職系の発信者50人に、献本して配る",m:2.1,c:"それだ。読者はもう本屋にいない。読者がいる場所に、本を置け。"},
+      {t:"Web広告に予算を全部",m:1.0,c:"広告で本は売れない。話題で売れるんだ。"}
+    ]}
+  ]
+},
+{
+  tag:"持ち込み原稿 ②",
+  title:"『私にとっての、ちょうどいい生き方』",
+  desc:"二十六歳、フォロワー三万二千人。恋愛と仕事のエッセイ。中身は既視感の塊で、編集部の評価は「薄い」の一言。ただ、本人には、人を惹きつける何かがある。",
+  base:20000,
+  steps:[
+    {q:"タイトル。中身が薄いことは、もうわかってる。",opts:[
+      {t:"『私らしく働くということ』",m:0.7,c:"「らしく」。誰にも刺さらない言葉の、堂々の第一位だ。"},
+      {t:"『がんばらなくていい、と言われても』",m:2.4,c:"うまい。世の中の優しい言葉に、みんなとっくにうんざりしてる。そこを突いた。"},
+      {t:"『20代女子の教科書』",m:1.2,c:"教科書は誰も読まない。学生時代に十分懲りてる。"},
+      {t:"『後悔しない生き方 40のルール』",m:1.6,c:"数字は入れておけ。凡庸だが、下は打たない。"}
+    ]},
+    {q:"表紙。書店で0.5秒しか見てもらえない。",opts:[
+      {t:"著者の顔を、大きく載せる",m:2.2,c:"中身が薄いなら、人で売れ。読者は情報じゃなく、その人を買ってるんだ。"},
+      {t:"おしゃれな抽象イラスト",m:1.1,c:"きれいだな。同じ顔をした二百冊の中に、きれいに埋もれる。"},
+      {t:"文字だけ、極太ゴシック",m:1.5,c:"ビジネス書の顔だ。この本の読者は、その棚に来ない。"},
+      {t:"手書き風の、温かいデザイン",m:0.9,c:"優しいな。優しい本は、優しい人しか買わない。数が足りない。"}
+    ]},
+    {q:"仕掛けをひとつだけ選べ。",opts:[
+      {t:"本人のSNSで、毎日1ページずつ全文公開",m:2.3,c:"正解。無料で読ませろ。ぜんぶ読める本ほど、なぜか売れる。"},
+      {t:"三万二千人に、発売告知を一回",m:0.8,c:"告知一回で売れるなら、俺たちは要らない。"},
+      {t:"書店でサイン会を10店舗",m:1.7,c:"会いに行ける著者は強い。ただ、十店舗ぶんで終わる。"},
+      {t:"有名著者に推薦文をもらう",m:1.9,c:"他人の権威を借りる。正しい。誰に頼むかで、すべてが決まるがな。"}
+    ]}
+  ]
+},
+{
+  tag:"最後の原稿",
+  title:"『存在の連続性についての考察』",
+  desc:"七十八歳の哲学者が、四十年書きためた原稿。難解。営業部は全員反対。会議での結論は「一万部売れれば御の字」。──あなたは、これを百万部にすると言った。",
+  base:50000,
+  steps:[
+    {q:"タイトル。ここで九割決まる。",opts:[
+      {t:"『存在と時間の再解釈』",m:0.3,c:"帰れ。"},
+      {t:"『なぜ、人は死ぬのが怖いのか』",m:2.5,c:"そうだ。哲学書を哲学書として売るな。全員が持ってる問いに、翻訳しろ。"},
+      {t:"『78歳の哲学者が、最後に伝えたいこと』",m:2.2,c:"「最後」というだけで人は読む。ずるい。ずるいが、正しい。"},
+      {t:"『世界一わかりやすい哲学入門』",m:1.4,c:"入門書の棚は死体だらけだ。まあ、死にはしない。"}
+    ]},
+    {q:"中身をどう編集する。著者は八十歳目前だ。",opts:[
+      {t:"原文を尊重し、一字も削らない",m:0.5,c:"著者に忠実で、読者に不誠実。それは編集じゃない。写経だ。"},
+      {t:"全部、対話形式に書き直させる",m:2.4,c:"四十年を捨てさせるのか。……いいだろう。読まれない名著より、読まれる駄作だ。"},
+      {t:"各章の冒頭に、三行の要約をつける",m:2.0,c:"現実的だな。人は要約しか読まない。要約が良ければ、本文も良かったことになる。"},
+      {t:"図解を100点、追加する",m:1.8,c:"売れる。ただし著者が泣くぞ。──泣かせろ。"}
+    ]},
+    {q:"どこに、この本を届ける。",opts:[
+      {t:"文芸誌に書評を出す",m:0.9,c:"その雑誌、何部出てるか知ってて言ってるか。"},
+      {t:"若者向けに、一節ずつSNSで切り出す",m:2.3,c:"老人の言葉を、若者の言語で流す。届く。"},
+      {t:"全国の高校・大学に献本",m:1.6,c:"十年後に効く。十年待てるならな。"},
+      {t:"著者の日常を、ドキュメンタリーで追わせる",m:2.5,c:"本を売るな、人を売れ。著者が物語になれば、本は勝手に動きだす。"}
+    ]},
+    {q:"重版がかかった。ここから先が、百万部の壁だ。",opts:[
+      {t:"帯を替えて、刷り直す",m:1.5,c:"五十万部からの一手はこれだ。同じ本を、別の本として、もう一度出す。"},
+      {t:"価格を下げる",m:0.8,c:"安くしても、読まない奴は読まない。"},
+      {t:"続編を同時に予告する",m:1.3,c:"悪くない。焦らしは効く。"},
+      {t:"「まだ読んでない人」に向けて広告を打つ",m:1.9,c:"正解。売れてる本の敵は、興味のない人間じゃない。まだ知らない人間だ。"}
+    ]}
+  ]
+}
+];
+
+const RANKS = [
+  {min:1000000,r:"S",n:"怪 物",  m:4,c:"百万部。……悪くない。だがな、これで満足する編集者から順に消えていく。次だ、次の原稿を持ってこい。"},
+  {min:600000, r:"A",n:"一流の二流",m:3,c:"よくやった。お前は「正しいこと」より「届くこと」を選べる人間だ。その神経の図太さが、この仕事の全部だ。"},
+  {min:300000, r:"B",n:"見込みあり",m:2,c:"惜しい。判断は悪くない。ただ、どこかで一回、著者に優しくしただろう。その優しさが十万部を捨ててる。"},
+  {min:150000, r:"C",n:"良い人",  m:1,c:"いい本を作ったな。いい本は売れない。読者はな、本を読みたいんじゃない。自分を肯定してほしいだけなんだ。"},
+  {min:0,      r:"D",n:"作家志望",m:0,c:"お前が作ったのは、お前が読みたい本だ。誰も頼んでない。もう一回、最初からやれ。"}
+];
+
+/* ===================== 設定 ===================== */
+const CONF = {
+  LP_URL: 'https://contena.co.jp/yourstory/',
+};
+/* リンクは必ず <a target="_blank"> で開く（window.open は file:// やアプリ内ブラウザで塞がれる） */
+function lpLink(cls,label){
+  return `<a class="${cls}" href="${CONF.LP_URL}" target="_blank" rel="noopener">${label}</a>`;
+}
+
+/* ===================== ドット絵（長倉顕太） ===================== */
+const FW=32, FH=34;
+const PAL={
+  h:'#3d2f24', H:'#1f1813', W:'#b3aea6', g:'#7d786f',
+  S:'#e9c5a3', s:'#bb8b6688', t:'#a87b5a',
+  B:'#cec1b0', E:'#171310',
+  C:'#1c1c20', c:'#0d0d10', l:'#40404a', T:'#eceae4'
+};
+/* [y, x0, x1, 色] 上書き順 */
+const BASE=[
+  // 首
+  [20,13,18,'t'],[21,13,18,'S'],[22,13,18,'S'],[23,13,18,'S'],
+  [21,13,13,'t'],[22,13,13,'t'],[23,13,13,'t'],[21,18,18,'t'],[22,18,18,'t'],[23,18,18,'t'],
+  // レザージャケット
+  [24,9,22,'C'],[25,7,24,'C'],[26,5,26,'C'],[27,4,27,'C'],[28,3,28,'C'],
+  [29,2,29,'C'],[30,2,29,'C'],[31,2,29,'C'],[32,2,29,'C'],[33,2,29,'C'],
+  // 白T
+  [24,13,18,'T'],[25,14,17,'T'],[26,15,16,'T'],
+  // 立ち襟
+  [24,10,12,'c'],[24,19,21,'c'],
+  [25,9,13,'c'],[25,18,22,'c'],
+  [26,8,14,'c'],[26,17,23,'c'],
+  [27,9,14,'c'],[27,17,22,'c'],
+  [24,12,12,'l'],[25,13,13,'l'],[26,14,14,'l'],[27,14,14,'l'],
+  [24,19,19,'l'],[25,18,18,'l'],[26,17,17,'l'],[27,17,17,'l'],
+  // ジップ（斜め）
+  [28,15,15,'l'],[29,15,15,'l'],[30,16,16,'l'],[31,16,16,'l'],[32,16,16,'l'],[33,17,17,'l'],
+  // 革の光沢
+  [27,6,8,'l'],[28,5,7,'l'],[29,4,6,'l'],[29,25,27,'l'],[30,26,28,'l'],
+  // 髪（黒・毛先を尖らせる）
+  [0,14,15,'H'],[0,18,19,'H'],
+  [1,12,16,'H'],[1,17,20,'H'],
+  [2,11,20,'H'],[3,10,21,'H'],[4,9,22,'H'],[5,8,23,'H'],[6,8,23,'H'],[7,8,23,'H'],
+  [8,8,23,'H'],[9,8,23,'H'],[10,8,23,'H'],[11,8,23,'H'],[12,8,23,'H'],[13,8,23,'H'],
+  [14,8,23,'H'],[15,8,23,'H'],[16,9,22,'H'],
+  [17,9,10,'H'],[17,21,22,'H'],[18,9,11,'H'],[18,20,22,'H'],[19,10,11,'H'],[19,20,21,'H'],[20,11,11,'H'],[20,20,20,'H'],
+  // 髪のツヤ
+  [2,13,17,'h'],[3,11,18,'h'],[4,10,17,'h'],[5,9,16,'h'],[6,9,14,'h'],[7,9,12,'h'],
+  [8,9,11,'h'],[9,9,10,'h'],[10,9,9,'h'],
+  [3,20,20,'h'],[4,20,21,'h'],[5,20,22,'h'],[6,21,22,'h'],[7,22,22,'h'],
+  // メッシュ（長短をばらして毛流れに沿わせる）
+  // 長い一筋（左）
+  [1,17,17,'W'],[2,16,16,'W'],[3,15,15,'W'],[4,14,14,'W'],[5,13,13,'W'],[6,12,12,'W'],
+  // 短い筋（左・こめかみへ）
+  [4,11,11,'W'],[5,10,10,'W'],[6,9,9,'W'],[7,9,9,'W'],
+  [2,13,13,'W'],[3,12,12,'W'],
+  // 長い一筋（右）
+  [1,20,20,'W'],[2,21,21,'W'],[3,22,22,'W'],[4,23,23,'W'],
+  // 短い筋（右）
+  [4,19,19,'W'],[5,20,20,'W'],
+  [6,22,22,'W'],[7,22,22,'W'],
+  // 半調（奥行き）
+  [3,18,18,'g'],[4,17,17,'g'],[5,16,16,'g'],
+  [5,11,11,'g'],[6,10,10,'g'],
+  [2,19,19,'g'],[3,20,20,'g'],
+  // サイドに落ちる細い筋（長さを変える）
+  [8,9,9,'W'],[9,9,9,'W'],[10,9,9,'W'],[11,9,9,'W'],[12,9,9,'W'],
+  [14,8,8,'W'],[15,8,8,'W'],
+  [10,8,8,'g'],[11,8,8,'g'],[16,9,9,'g'],
+  [9,22,22,'W'],[10,22,22,'W'],[11,22,22,'W'],
+  [13,23,23,'W'],[14,23,23,'W'],[15,23,23,'W'],
+  [12,23,23,'g'],[16,22,22,'g'],
+  // 顔
+  [7,12,19,'S'],[8,11,20,'S'],[9,10,21,'S'],[10,10,21,'S'],[11,10,21,'S'],[12,10,21,'S'],
+  [13,10,21,'S'],[14,10,21,'S'],[15,10,21,'S'],[16,11,20,'S'],[17,11,20,'S'],[18,12,19,'S'],
+  [19,13,18,'S'],[20,14,17,'S'],
+  // 前髪（額を出して上げる）
+  [7,11,20,'H'],[8,11,14,'H'],
+  [7,12,18,'h'],[8,12,13,'h'],
+  // 前髪のメッシュ
+  [7,14,14,'W'],[7,18,18,'g'],
+  // 影：輪郭・こけた頬
+  [10,21,21,'s'],[11,21,21,'s'],[12,21,21,'s'],[13,21,21,'s'],[14,21,21,'s'],[15,21,21,'s'],
+  [16,20,20,'s'],[17,20,20,'s'],
+  [13,10,10,'s'],[14,10,10,'s'],[15,10,11,'s'],[16,11,11,'s'],
+  [15,12,13,'s'],[15,18,19,'s'],
+  // 顎のライン
+  [18,12,12,'s'],[18,19,19,'s'],[19,13,13,'s'],[19,18,18,'s'],[20,14,14,'s'],[20,17,17,'s'],
+  // 鼻
+  [12,16,16,'s'],[13,16,16,'s'],[14,16,16,'s'],[15,15,17,'s'],
+  // 口元の影
+  [18,15,16,'s']
+];
+/* 表情 0=最悪 1=呆れ 2=普通 3=納得 4=ニヤリ */
+const LID=[[12,10],[13,11],[14,11],[17,11],[18,11],[19,10]];
+/* つり目：外側（11,20側）が上がる */
+const EY_F=[[12,11],[13,11],[13,12],[14,12],[17,12],[18,12],[18,11],[19,11]];
+const EY_N=[[12,11],[13,12],[14,12],[17,12],[18,12],[19,11]];
+const MOODS=[
+  { // 0 見放し・怒り
+    brow:[[11,9],[12,9],[12,10],[13,10],[13,11],[14,11],[17,11],[18,11],[18,10],[19,10],[19,9],[20,9]],
+    lid:[], eye:EY_N,
+    mouth:[[13,18],[14,17],[15,16],[16,16],[17,17],[18,18]]
+  },
+  { // 1 呆れ・半目
+    brow:[[11,10],[12,10],[13,11],[14,11],[17,11],[18,11],[19,10],[20,10]],
+    lid:[], eye:[[12,12],[13,12],[14,12],[17,12],[18,12],[19,12]],
+    mouth:[[13,18],[14,17],[15,17],[16,17],[17,18]]
+  },
+  { // 2 普通
+    brow:[[11,9],[12,9],[13,10],[14,10],[17,10],[18,10],[19,9],[20,9]],
+    lid:LID, eye:EY_F,
+    mouth:[[14,17],[15,17],[16,17],[17,17]]
+  },
+  { // 3 納得
+    brow:[[11,8],[12,9],[13,9],[14,10],[17,10],[18,9],[19,9],[20,8]],
+    lid:LID, eye:EY_F,
+    mouth:[[14,16],[15,17],[16,17],[17,16]]
+  },
+  { // 4 ニヤリ
+    brow:[[11,8],[12,8],[13,9],[14,9],[17,9],[18,9],[19,8],[20,8]],
+    lid:[], eye:[[12,11],[13,11],[14,12],[17,12],[18,11],[19,11]],
+    mouth:[[13,18],[14,17],[15,17],[16,17],[17,16],[18,15]]
+  }
+];
+function moodOf(m){ return m>=2.0?4 : m>=1.5?3 : m>=1.0?2 : m>=0.7?1 : 0; }
+function drawFace(cv,mood,sc){
+  const g=cv.getContext('2d');
+  cv.width=FW*sc; cv.height=FH*sc;
+  g.imageSmoothingEnabled=false;
+  g.clearRect(0,0,cv.width,cv.height);
+  BASE.forEach(([y,x0,x1,k])=>{ g.fillStyle=PAL[k]; g.fillRect(x0*sc,y*sc,(x1-x0+1)*sc,sc); });
+  const M=MOODS[Math.max(0,Math.min(4,mood))];
+  g.fillStyle=PAL.t;
+  (M.lid||[]).forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
+  g.fillStyle=PAL.E;
+  M.brow.forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
+  M.eye.forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
+  M.mouth.forEach(([x,y])=>g.fillRect(x*sc,y*sc,sc,sc));
+}
+function face(mood,sc){ return `<canvas class="face" data-mood="${mood}" data-sc="${sc}" style="width:${FW*sc}px;height:${FH*sc}px"></canvas>`; }
+function paintFaces(){
+  app.querySelectorAll('canvas.face').forEach(cv=>drawFace(cv,+cv.dataset.mood,+cv.dataset.sc));
+}
+
+/* ===================== 効果音 ===================== */
+let AC=null, muted=false;
+function ac(){
+  if(!AC){const C=window.AudioContext||window.webkitAudioContext; if(!C)return null; AC=new C();}
+  if(AC.state==='suspended')AC.resume();
+  return AC;
+}
+function nbuf(ctx,dur){
+  const n=Math.max(1,Math.floor(ctx.sampleRate*dur));
+  const b=ctx.createBuffer(1,n,ctx.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  return b;
+}
+function tone(ctx,f0,f1,dur,gain,delay,type){
+  const o=ctx.createOscillator(), g=ctx.createGain(), t=ctx.currentTime+(delay||0);
+  o.type=type||'sine';
+  o.frequency.setValueAtTime(f0,t);
+  if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  g.gain.setValueAtTime(gain,t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+dur+.03);
+}
+function noise(ctx,f0,f1,dur,gain,Q,delay,ftype){
+  const s=ctx.createBufferSource(); s.buffer=nbuf(ctx,dur);
+  const bp=ctx.createBiquadFilter(), g=ctx.createGain(), t=ctx.currentTime+(delay||0);
+  bp.type=ftype||'bandpass'; bp.Q.value=Q||1;
+  bp.frequency.setValueAtTime(f0,t);
+  if(f1)bp.frequency.exponentialRampToValueAtTime(f1,t+dur);
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(gain,t+dur*.28);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  s.connect(bp).connect(g).connect(ctx.destination); s.start(t); s.stop(t+dur+.03);
+}
+function sfx(kind){
+  if(muted)return;
+  let ctx; try{ctx=ac();}catch(e){return;}
+  if(!ctx)return;
+  if(kind==='page'){            // ページをめくる
+    noise(ctx,800,2800,.26,.07,.7);
+    tone(ctx,320,180,.09,.05);
+  }else if(kind==='stamp'){     // 判子を押す（選択決定）
+    tone(ctx,140,58,.14,.28);
+    noise(ctx,1400,600,.05,.14,1.2);
+  }else if(kind==='tick'){      // 部数カウント
+    tone(ctx,2600,null,.018,.022,0,'square');
+  }else if(kind==='thud'){      // 重版スタンプ
+    tone(ctx,110,42,.3,.42);
+    noise(ctx,900,220,.09,.24,.8,0,'lowpass');
+  }
+}
+document.addEventListener('pointerdown',e=>{
+  const b=e.target.closest('button,a');
+  if(!b||b.id==='mute')return;
+  sfx(b.classList.contains('cta')?'page':'stamp');
+});
+document.getElementById('mute').addEventListener('click',function(){
+  muted=!muted;
+  this.textContent=muted?'✕':'♪';
+  this.classList.toggle('off',muted);
+  if(!muted)sfx('page');
+});
+
+/* ===================== 状態 ===================== */
+let ri=0, si=0, mult=1, total=0, log=[];
+const app=document.getElementById('app');
+const fmt=n=>Math.round(n).toLocaleString('ja-JP');
+function show(html){app.innerHTML='<div class="fade" style="display:flex;flex-direction:column;flex:1">'+html+'</div>';paintFaces();window.scrollTo(0,0);}
+function restart(){ ri=0; si=0; mult=1; total=0; log=[]; opening(); }
+const sheetEl=document.getElementById('sheet');
+function openSheet(){ sheetEl.classList.add('open'); }
+function closeSheet(){ sheetEl.classList.remove('open'); }
+document.getElementById('menu').addEventListener('click',openSheet);
+document.getElementById('sheetHome').addEventListener('click',()=>{closeSheet();restart();});
+document.getElementById('sheetLp').href=CONF.LP_URL;
+document.getElementById('sheetLp').addEventListener('click',closeSheet);
+document.getElementById('sheetClose').addEventListener('click',closeSheet);
+sheetEl.addEventListener('click',e=>{ if(e.target===sheetEl)closeSheet(); });
+
+/* ===================== 画面 ===================== */
+function opening(){
+  show(`
+    <div class="title-wrap">
+      <div class="cover">
+        <div class="plate">
+          <div class="vt">
+            <div class="by">長倉顕太<span class="p">の</span></div>
+            <div class="mt">ベストセラー製造機</div>
+          </div>
+        </div>
+        <div class="obi">B E S T S E L L E R　M A K E R</div>
+      </div>
+    </div>
+    <button class="cta" onclick="rule()">は じ め る</button>
+    <div class="title-sub">所要 約7分</div>
+    ${lpLink('lp-quiet','あなたのゲームを作りませんか？')}
+  `);
+}
+
+function rule(){
+  show(`
+    <div class="kicker">B E S T S E L L E R　M A K E R</div>
+    <h1 style="font-size:clamp(22px,6vw,30px)">長倉顕太の<br>ベストセラー製造機</h1>
+    <div class="face-center">${face(2,5)}</div>
+    <div class="talk">
+      <div class="who">長 倉 顕 太</div>
+      <div class="line">「あんたは今日から、俺だ。<br>
+      机の上に、まだ誰も価値を認めてない原稿が三本ある。<br><br>
+      中身は変えられない。変えられるのは、<b>タイトル</b>と<b>見せ方</b>と<b>売り方</b>だけだ。<br>
+      ──それだけで、五千部が百万部になる。<br>
+      ほんとうかどうか、三本でたしかめてくれ。」</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" onclick="startRound()">原稿を開く</button>
+  `);
+}
+
+function startRound(){
+  const R=ROUNDS[ri]; si=0; mult=1;
+  show(`
+    <div class="kicker">${ri+1} / 3</div>
+    <div class="ms">
+      <div class="tag">${R.tag}</div>
+      <div class="t">${R.title}</div>
+      <div class="d">${R.desc}</div>
+    </div>
+    <div class="react">
+      ${face(1,4)}
+      <div class="talk"><div class="who">営業部</div><div class="line">「初版、${fmt(R.base)}部が限界っすね」</div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" onclick="step()">やってみる</button>
+  `);
+}
+
+function step(){
+  const R=ROUNDS[ri], S=R.steps[si];
+  const bars=R.steps.map((_,i)=>`<i class="${i<si?'on':''}"></i>`).join('');
+  const opts=S.opts.map((o,i)=>
+    `<button class="btn" onclick="pick(${i})"><span class="no">${'ABCD'[i]}</span>${o.t}</button>`).join('');
+  show(`
+    <div class="kicker">${R.tag}</div>
+    <div class="step">${bars}</div>
+    <div class="ask">${face(2,2)}<h2>${S.q}</h2></div>
+    ${opts}
+  `);
+}
+
+function pick(i){
+  const R=ROUNDS[ri], S=R.steps[si], o=S.opts[i];
+  mult*=o.m; log.push(o.m);
+  const now=R.base*mult;
+  const last=si===R.steps.length-1;
+  show(`
+    <div class="kicker">${R.tag}</div>
+    <div class="ms" style="padding-bottom:14px">
+      <div class="tag">選んだ手</div>
+      <div class="t" style="font-size:17px;margin-bottom:0">${o.t}</div>
+      <div class="d" style="margin-bottom:34px"></div>
+    </div>
+    <div class="react">
+      ${face(moodOf(o.m),4)}
+      <div class="talk"><div class="who">長 倉</div><div class="line">「${o.c}」</div></div>
+    </div>
+    <div class="meter">
+      <div class="lab"><span>想定部数</span><span>${o.m>=2.0?'手ごたえ　◎':o.m>=1.5?'手ごたえ　○':o.m>=1.0?'手ごたえ　△':'手ごたえ　×'}</span></div>
+      <div class="num"><span id="cnt">0</span><small>部</small></div>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" onclick="${last?'result()':'next()'}">${last?'結果を見る':'次の判断へ'}</button>
+  `);
+  countTo(now, Math.min(100, now/12000*100));
+}
+function next(){ si++; step(); }
+
+function countTo(v,pct){
+  const el=document.getElementById('cnt'); if(!el)return;
+  document.getElementById('bar').style.width=Math.min(100,pct)+'%';
+  const dur=900, t0=Date.now();
+  let lastTick=0;
+  clearInterval(countTo._id);
+  countTo._id=setInterval(()=>{
+    const now=Date.now(), p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+    el.textContent=fmt(v*e);
+    if(p<.92 && now-lastTick>68){ lastTick=now; sfx('tick'); }
+    if(p>=1)clearInterval(countTo._id);
+  },16);
+}
+
+function result(){
+  const R=ROUNDS[ri], sales=R.base*mult; total+=sales;
+  const hit = sales>=500000?'百 万 部 級':sales>=100000?'大 増 刷':sales>=30000?'重 版 出 来':'初 版 止 ま り';
+  const last = ri===ROUNDS.length-1;
+  show(`
+    <div class="kicker">${R.tag}　結果</div>
+    <h2 style="font-size:18px;color:#cfc7b8">${R.title}</h2>
+    <div class="meter">
+      <div class="lab"><span>最終実売</span><span>目標 ${fmt(R.base)}部</span></div>
+      <div class="num"><span id="cnt">0</span><small>部</small></div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="stamp">${hit}</div>
+    </div>
+    <div class="react">
+      ${face(moodOf(Math.pow(mult,1/R.steps.length)),4)}
+      <div class="talk"><div class="who">累 計</div><div class="line" style="font-size:20px">${fmt(total)} 部</div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" onclick="${last?'ending()':'nextRound()'}">${last?'編集者ランクを見る':'次の原稿へ'}</button>
+  `);
+  countTo(sales, sales/R.base/12*100);
+  setTimeout(()=>sfx('thud'),560);
+}
+function nextRound(){ ri++; startRound(); }
+
+function ending(){
+  const rk=RANKS.find(x=>total>=x.min);
+  show(`
+    <div class="kicker">F I N A L</div>
+    <div class="meter" style="margin-top:0">
+      <div class="lab"><span>三作 累計</span><span></span></div>
+      <div class="num"><span id="cnt">0</span><small>部</small></div>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+    <div class="rank">${rk.r}</div>
+    <div class="rankname">${rk.n}</div>
+    <div class="react">
+      ${face(rk.m,4)}
+      <div class="talk"><div class="who">長 倉 顕 太</div><div class="line">「${rk.c}」</div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" onclick="offer()">つづきを読む</button>
+    <button class="btn" style="margin-top:10px;text-align:center;border-left:none;background:#16130f;color:#a89f92;border:1px solid #2c261f" onclick="restart()">もう一度やる</button>
+  `);
+  countTo(total, total/1200000*100);
+}
+
+function offer(){
+  show(`
+    <div class="kicker">こ の ゲ ー ム に つ い て</div>
+    <h2>これは、サンプルです。</h2>
+    <p>いま遊んでいただいたのは、<b>1時間で作った試作品</b>です。<br>
+    長倉さんの言葉も、私が想像で書きました。ここが<b>本物になったら、どうなるか</b>を見ていただきたくて作りました。</p>
+    <div class="card"><h3>１　説明せずに、伝わる</h3><p>「タイトルで部数は変わる」と百回言うより、一回負けさせたほうが早い。講座の入口、書籍の読者特典、Voicyリスナーへの配布──どこに置いても、三分で長倉さんの考え方が入ります。</p></div>
+    <div class="card"><h3>２　人が集まる導線になる</h3><p>URLひとつ。登録も課金もインストールもなし。結果画面がスクリーンショットされてSNSに流れる設計にできます。「Sランク取れた」は、感想より拡散します。</p></div>
+    <div class="card"><h3>３　二十代が、勝手に尊敬しはじめる</h3><p>実績を語られても若い人はピンと来ない。でも自分が全問はずして、長倉さんの正解を見せられたら、実力差は一瞬でわかります。<b>説教ではなく、体験で負けさせる</b>。コミュニティにいちばん効くのは、たぶんこれです。</p></div>
+    <div class="card"><h3>４　長倉顕太が、遊べるコンテンツになる</h3><p>本もラジオも講座も「受け取る」もの。ゲームだけが「本人と勝負した」という記憶になります。親近感の作り方として、これ以上のものを私は知りません。</p></div>
+    <div class="footnote">
+      <p class="small">本気で作るなら、講評はすべて長倉さんの実際の言葉に差し替え、原稿は<b>実際に手がけた本</b>をモデルにします。<br>そこまでやると、これは<b>ゲームの形をした長倉顕太の教材</b>になります。</p>
+      <p class="small" style="margin-top:16px;color:var(--gold)">一度、作らせてもらえませんか。</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="cta" style="margin-top:20px" onclick="flyer()">もうひとつ、お知らせ</button>
+  `);
+}
+
+function flyer(){
+  show(`
+    <div class="kicker">C O N T E N A</div>
+    <div class="contena-card">
+      <div class="cc-lead">このゲームのように</div>
+      <div class="cc-head">あなたの人生・事業を、<br>ゲーム化しませんか？</div>
+      <div class="cc-uses">
+        <span>集客・リスト取り</span><span>ブランディング</span>
+        <span>講座・出版の販促</span><span>話題づくり・PR</span>
+      </div>
+      <div class="cc-body">本でも、SNSでも、広告でもない。<br><span class="cc-mk">第4の選択肢「ゲーム」</span>で事業を成長させましょう。</div>
+      ${lpLink('cc-btn','詳 し く は こ ち ら')}
+      <div class="cc-note">（別のタブで開きます）</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" style="margin-top:20px;text-align:center;border-left:none;background:#16130f;color:#a89f92;border:1px solid #2c261f" onclick="restart()">トップに戻る</button>
+  `);
+}
+
+opening();
+</script>
+</body>
+</html>
