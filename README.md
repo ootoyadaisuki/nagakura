@@ -10,3 +10,8 @@
 - LP への導線 URL は `index.html` 内の `CONF.LP_URL` 1か所のみ
 
 ※ 限定公開（noindex）。検索結果には出しません。
+
+## 流れ図
+
+`shots/flow.png` … タイトルからLP案内までの全9画面。`shots/*.png` は各画面の単体。
+再生成は `node scratchpad/shots.js && node scratchpad/strip.js`（Playwright／実Chrome使用）。
